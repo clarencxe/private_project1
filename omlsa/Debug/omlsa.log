@@ -1,0 +1,31 @@
+﻿生成启动时间为 2018/11/14 15:14:05。
+     1>项目“F:\Work\2018\Beamforming\C\omlsa\omlsa\omlsa\omlsa.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Debug\omlsa.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt omlsa.c
+         omlsa.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(232): warning C4554: “&”: 检查运算符优先级可能存在的错误；使用圆括号阐明优先级
+     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(687): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(45): warning C4101: “jj”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(710): warning C4716: “PostFilterProcess”: 必须返回一个值
+       Link:
+         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\omlsa.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.lib" /MACHINE:X86 Debug\conv.obj
+         Debug\DM_ANC_WIN_FFT.obj
+         Debug\expint.obj
+         Debug\fft.obj
+         Debug\ifft.obj
+         Debug\main.obj
+         Debug\omlsa.obj
+         LINK : 没有找到 F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe 或上一个增量链接没有生成它；正在执行完全链接
+         omlsa.vcxproj -> F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe;#1" /manifest Debug\omlsa.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         正在删除文件“Debug\omlsa.unsuccessfulbuild”。
+         正在对“Debug\omlsa.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“F:\Work\2018\Beamforming\C\omlsa\omlsa\omlsa\omlsa.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:02.07
