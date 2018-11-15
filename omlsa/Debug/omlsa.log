@@ -1,31 +1,66 @@
-﻿生成启动时间为 2018/11/14 15:14:05。
-     1>项目“F:\Work\2018\Beamforming\C\omlsa\omlsa\omlsa\omlsa.vcxproj”在节点 2 上(build 个目标)。
+﻿生成启动时间为 2018/11/15 14:57:57。
+     1>项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa\omlsa.vcxproj”在节点 3 上(build 个目标)。
      1>InitializeBuildStatus:
          正在创建“Debug\omlsa.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
-         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt omlsa.c
+         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt conv.c DM_ANC_WIN_FFT.c expint.c fft.c ifft.c main.c omlsa.c
          omlsa.c
-     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(232): warning C4554: “&”: 检查运算符优先级可能存在的错误；使用圆括号阐明优先级
-     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(687): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
-     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(45): warning C4101: “jj”: 未引用的局部变量
-     1>f:\work\2018\beamforming\c\omlsa\omlsa\omlsa\omlsa.c(710): warning C4716: “PostFilterProcess”: 必须返回一个值
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa.c(232): warning C4554: “&”: 检查运算符优先级可能存在的错误；使用圆括号阐明优先级
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa.c(687): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa.c(45): warning C4101: “jj”: 未引用的局部变量
+         main.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\main.c(35): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 e:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\main.c(36): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\main.c(38): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 e:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\main.c(39): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\main.c(47): warning C4047: “==”:“int”与“void *”的间接级别不同
+         ifft.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\ifft.c(24): warning C4101: “xc”: 未引用的局部变量
+         fft.c
+         expint.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\expint.c(173): warning C4244: “函数”: 从“double”转换到“int”，可能丢失数据
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\expint.c(173): warning C4244: “函数”: 从“double”转换到“int”，可能丢失数据
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\expint.c(58): warning C4101: “al”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\expint.c(223): warning C4101: “i”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\expint.c(223): warning C4101: “j”: 未引用的局部变量
+         DM_ANC_WIN_FFT.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(6): warning C4030: 第一个形参表比第二个长
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(55): warning C4029: 声明的形参表不同于定义
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(56): warning C4101: “temp1”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(56): warning C4101: “m”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(56): warning C4101: “j”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(132): warning C4101: “temp1”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(132): warning C4101: “m”: 未引用的局部变量
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\dm_anc_win_fft.c(132): warning C4101: “j”: 未引用的局部变量
+         conv.c
+     1>e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(854): warning C4005: “max”: 宏重定义
+                 f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa_def.h(35) : 参见“max”的前一个定义
+     1>e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(855): warning C4005: “min”: 宏重定义
+                 f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa_def.h(36) : 参见“min”的前一个定义
+         正在生成代码...
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa\omlsa.c(710): warning C4716: “PostFilterProcess”: 必须返回一个值
        Link:
-         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\omlsa.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.lib" /MACHINE:X86 Debug\conv.obj
+         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\omlsa.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.lib" /MACHINE:X86 Debug\conv.obj
          Debug\DM_ANC_WIN_FFT.obj
          Debug\expint.obj
          Debug\fft.obj
          Debug\ifft.obj
          Debug\main.obj
          Debug\omlsa.obj
-         LINK : 没有找到 F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe 或上一个增量链接没有生成它；正在执行完全链接
-         omlsa.vcxproj -> F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe
+         LINK : 没有找到 F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.exe 或上一个增量链接没有生成它；正在执行完全链接
+         omlsa.vcxproj -> F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.exe
        Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\Work\2018\Beamforming\C\omlsa\omlsa\Debug\omlsa.exe;#1" /manifest Debug\omlsa.exe.intermediate.manifest
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa.exe;#1" /manifest Debug\omlsa.exe.intermediate.manifest
        FinalizeBuildStatus:
          正在删除文件“Debug\omlsa.unsuccessfulbuild”。
          正在对“Debug\omlsa.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“F:\Work\2018\Beamforming\C\omlsa\omlsa\omlsa\omlsa.vcxproj”(build 个目标)的操作。
+     1>已完成生成项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa\omlsa.vcxproj”(build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:02.07
+已用时间 00:00:02.25

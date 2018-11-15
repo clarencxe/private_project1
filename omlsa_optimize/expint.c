@@ -7,9 +7,9 @@
 #include<float.h>
 #include<math.h>
 #define Inf DBL_MAX
-omlsa_float32_t polyval(omlsa_float32_t x, omlsa_float32_t*coeff,int len);
-omlsa_float32_t  eps(omlsa_float32_t val);
-omlsa_float32_t expint(omlsa_float32_t x){
+omlsa_float64_t polyval(omlsa_float64_t x, omlsa_float64_t*coeff,int len);
+omlsa_float64_t  eps(omlsa_float64_t val);
+omlsa_float32_t expint(omlsa_float64_t x){
 //function y = expint(x)
 //%EXPINT Exponential integral function.
 //%   Y = EXPINT(X) is the exponential integral function for each
@@ -29,7 +29,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //%       Ei(x) = REAL(-EXPINT(-x)), for real x > 0
 //%
 //%   Class support for input X:
-//%      float: omlsa_float32_t, single
+//%      float: omlsa_float64_t, single
 //
 //%   Copyright 1984-2011 The MathWorks, Inc. 
 //
@@ -54,12 +54,12 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //     -6.973790859534190e-04 -1.019573529845792e-02 -7.811863559248197e-02 ...
 //     -3.012432892762715e-01 -7.773807325735529e-01  8.267661952366478e+00];
 
-   static omlsa_float32_t p[9] =  {-3.602693626336023e-09, -4.819538452140960e-07, -2.569498322115933e-05, 
+   static omlsa_float64_t p[9] =  {-3.602693626336023e-09, -4.819538452140960e-07, -2.569498322115933e-05, 
                        -6.973790859534190e-04, -1.019573529845792e-02, -7.811863559248197e-02,
                        -3.012432892762715e-01, -7.773807325735529e-01,  8.267661952366478e+00};
-    static int n; omlsa_float32_t am2,am1,bm2,bm1; omlsa_float32_t alpha,a ,al,b,beta_l;
-     omlsa_float32_t polyv,y;
-     omlsa_float32_t xk, yk, pterm, term,f,oldf ; 
+    static int n; omlsa_float64_t am2,am1,bm2,bm1; omlsa_float64_t alpha,a , b,beta_l;
+     omlsa_float64_t polyv,y;
+     omlsa_float64_t xk, yk, pterm, term,f,oldf ; 
      int j;
 //polyv = polyval(p,real(x));
 
@@ -67,7 +67,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //
 //% series expansion
 //
-//k = find( abs(imag(x)) <= polyv );
+//k = find( abs_local(imag(x)) <= polyv );
    
 //if ~isempty(k)
 //
@@ -79,7 +79,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //   pterm = xk;
 //   term = xk;
 //
-//   while any(abs(term) > (eps(yk)))
+//   while any(abs_local(term) > (eps(yk)))
 //      yk = yk + term;
 //      j = j + 1;
 //      pterm = -xk.*pterm/j;
@@ -89,7 +89,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //   y(k) = yk;
 //end
    if(0<=polyv){
-       omlsa_float32_t egamma = 0.57721566490153286061;
+       omlsa_float64_t egamma = 0.57721566490153286061;
        
        xk = x;
        yk = -egamma - log(xk);
@@ -110,7 +110,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //
 //% continued fraction
 //
-//k = find( abs(imag(x)) > polyv );
+//k = find( abs_local(imag(x)) > polyv );
 //if ~isempty(k)
 //   %   note: am1, bm1 corresponds to A(j-1), B(j-1) of recursion formulae
 //   %         am2, bm2 corresponds to A(j-2), B(j-2) of recursion formulae
@@ -128,7 +128,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 //   oldf = Inf(size(xk));
 //   j = 2;
 //
-//   while any(abs(f-oldf) > (100*eps(class(f)).*abs(f)))
+//   while any(abs_local(f-oldf) > (100*eps(class(f)).*abs_local(f)))
 //       % calculate the coefficients of the recursion formulas for j even
 //       alpha = n-1+(j/2); % note: beta_l= 1
 //   
@@ -169,10 +169,10 @@ omlsa_float32_t expint(omlsa_float32_t x){
 	   xk = x;
 	   am2 = 0; bm2 = 0;  am1 = 1;  
        bm1 = xk;  f = am1 / bm1;
-       oldf = Inf;
+       oldf = (omlsa_float64_t)Inf;
        j = 2;
 
-       if(abs(f-oldf)> (100*2.2204e-16 *abs(f))){  //  eps(class(f)) = eps('omlsa_float32_t') 浮点相对精度
+       if(abs_local(f-oldf)> (100*2.2204e-16 *abs_local(f))){  //  eps(class(f)) = eps('omlsa_float64_t') 浮点相对精度
 
          
             //%calculate A
@@ -212,7 +212,7 @@ omlsa_float32_t expint(omlsa_float32_t x){
 
 //
 //y = reshape(y,siz);
-    return y;
+    return (omlsa_float32_t)y;
 }
 
 /*
@@ -221,10 +221,10 @@ omlsa_float32_t expint(omlsa_float32_t x){
    y = x^8 + x^7 + x^6+x^5+x^4+x^3+x^2+x^1 + 1;
 */
 
-omlsa_float32_t polyval(omlsa_float32_t x, omlsa_float32_t*coeff,int len){
-    int i,j;
-    omlsa_float32_t temp1, temp2, rev;
-	omlsa_float32_t x_2 =  x*x;
+omlsa_float64_t polyval(omlsa_float64_t x, omlsa_float64_t*coeff,int len){
+    
+    omlsa_float64_t temp1, temp2, rev;
+	omlsa_float64_t x_2 =  x*x;
     temp1 = x;	
     temp2 = x*x;
 
@@ -239,9 +239,9 @@ omlsa_float32_t polyval(omlsa_float32_t x, omlsa_float32_t*coeff,int len){
 
 
 #define eps1  2.2204e-16
-omlsa_float32_t  eps(omlsa_float32_t val){
-   
-    omlsa_float32_t rev,temp;
+omlsa_float64_t  eps(omlsa_float64_t val){
+    omlsa_float64_t rev;
+    omlsa_float64_t  temp;
     temp = 1.0;
     val = fabs(val);
 

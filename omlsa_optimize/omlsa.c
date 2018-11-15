@@ -38,33 +38,39 @@ void PostFilterInit(){
 }
    int I_empty= 1;  omlsa_float32_t m_P_local;
    omlsa_float32_t *xi_local_ptr, *xi_global_ptr;omlsa_float32_t xi_peak_dB;
+    	 	
+#define REV_SUCESS 0
+  
 
 int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 
-	int i, jj; int size; omlsa_float32_t *Sf_ptr, *Conv_I_ptr;
+	int i,rev ; int size; omlsa_float32_t *Sf_ptr, *Conv_I_ptr;
+     omlsa_float32_t lambda_d_global[FRAME_LEN21];	 //  B 
+     omlsa_float32_t gamma[FRAME_LEN21];				 //  B  
+     omlsa_float32_t v[FRAME_LEN21];					 //  B  T  
+	 omlsa_float32_t Y_2[FRAME_LEN21];	
+     creal_T Y_COMPLEX[FFT_LEN];  //2A T
+	
+     rev = REV_SUCESS;
 
+// Temp
+   
 	// Temp var
-    omlsa_float32_t Y_2[FRAME_LEN21];	 	 	
-    omlsa_float32_t lambda_d[FRAME_LEN21];			 //  B
-    omlsa_float32_t lambda_d_global[FRAME_LEN21];	 //  B    
-    omlsa_float32_t gamma[FRAME_LEN21];				 //  B  
-    omlsa_float32_t v[FRAME_LEN21];					 //  B  T  
-    creal_T Y_COMPLEX[FFT_LEN];  //2A T
-	 creal_T X_COMPLEX[FFT_LEN];  //2A T
+
     if(FrameCnt==1){
      	for(i=0;i< Inlen; i++){	
-	    	pcm[i] = (omlsa_float32_t)pIn[i]/32768.0;		 	
+	    	pcm[i] = (omlsa_float32_t)pIn[i]/32768.0f;		 	
 	     }
 	}
 	else{
      	for(i=0;i< Inlen; i++){	
-	    	pcm[i+FRAME_SHIFT] = (omlsa_float32_t)pIn[i]/32768.0;		 	
+	    	pcm[i+FRAME_SHIFT] = (omlsa_float32_t)pIn[i]/32768.0f;		 	
 	     }
 	}
 
 
-   {
-	 omlsa_float32_t winy[FRAME_LEN];  // Temp Var
+    {
+     omlsa_float32_t winy[FRAME_LEN];  //  A
 	 for(i=0;i<FRAME_LEN;i++){
 		winy[i] = pcm[i]*Window[i];
 	  } 
@@ -82,9 +88,9 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	}
     
 	for(i=0; i<FRAME_LEN21; i++){ 
-		gamma[i] = Y_2[i] / max(lambda_d[i], 1e-10); 	    
-		eta[i] = alpha_eta * eta_2term[i] + (1-alpha_eta) * max(gamma[i]-1,0);
-		eta[i]=max(eta[i],eta_min);
+		gamma[i] = Y_2[i] / max_local(lambda_d[i], 1e-10f); 	    
+		eta[i] = alpha_eta * eta_2term[i] + (1-alpha_eta) * max_local(gamma[i]-1,0);
+		eta[i]=max_local(eta[i],eta_min);
         v[i]  = gamma[i] * eta[i] / (1+eta[i]);    
 	}
  
@@ -110,8 +116,8 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	 }
      else{
 		 for(i=0; i<FRAME_LEN21; i++)  {
-			 Smin[i] = min(Smin[i], S[i]); 
-			 Smact[i] =  min(Smact[i], S[i]); 
+			 Smin[i] = min_local(Smin[i], S[i]); 
+			 Smact[i] =  min_local(Smact[i], S[i]); 
 		 }
 	 }
  
@@ -120,10 +126,10 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	 }
    
    {
-	   omlsa_float32_t I[FRAME_LEN21];
-	   omlsa_float32_t Conv_I[FRAME_LEN21+3];			 
-       omlsa_float32_t Conv_Y[FRAME_LEN21+3];					
-
+				
+	 omlsa_float32_t I[FRAME_LEN21];
+	 omlsa_float32_t Conv_I[FRAME_LEN21+3];			 
+     omlsa_float32_t Conv_Y[FRAME_LEN21+3];	
 
 
 	for(i=0; i<FRAME_LEN21; i++) {
@@ -139,7 +145,7 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	Conv_I_ptr = &Conv_I[1];
 
 	{
-		omlsa_float32_t Y2_I[FRAME_LEN21];
+	    omlsa_float32_t Y2_I[FRAME_LEN21];
         omlsa_float32_t* Conv_Y_ptr;
 
 		for(i=0; i<FRAME_LEN21; i++){
@@ -166,27 +172,27 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	 else{
 		 for(i=0;i<FRAME_LEN21;i++){
 		    St[i]=alpha_s*St[i]+(1-alpha_s)*Sft[i];
-            Smint[i]=min(Smint[i],St[i]);
-            Smactt[i]=min(Smactt[i],St[i]);
+            Smint[i]=min_local(Smint[i],St[i]);
+            Smactt[i]=min_local(Smactt[i],St[i]);
 		 }
 	 }
 
 {
-	  omlsa_float32_t phat[FRAME_LEN21];				 //  B   T
-omlsa_float32_t qhat[FRAME_LEN21];				 //  B   T
-omlsa_float32_t Sr_Y2[FRAME_LEN21];				 //  B   T
-omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
+	 omlsa_float32_t phat[FRAME_LEN21];	
+	 omlsa_float32_t qhat[FRAME_LEN21];				 
+     omlsa_float32_t Sr_Y2[FRAME_LEN21];			 
+     omlsa_float32_t Sr_S[FRAME_LEN21];	
   
         for(i=0;i<FRAME_LEN21;i++){         
-		 	 Sr_Y2[i] = Y_2[i] / Bmin / max(Smint[i], 1e-10);
-			 Sr_S[i] = S[i]/Bmin/max(Smint[i],1e-10); 
+		 	 Sr_Y2[i] = Y_2[i] / Bmin / max_local(Smint[i], 1e-10f);
+			 Sr_S[i] = S[i]/Bmin/max_local(Smint[i],1e-10f); 
 		}
          
 		for(i=0;i<FRAME_LEN21;i++){ 
   
-			 if(Sr_Y2[i]>1 && Sr_Y2[i]<delta_yt & Sr_S[i]<delta_s){
+			 if(Sr_Y2[i]>1 && Sr_Y2[i]<delta_yt && Sr_S[i]<delta_s){
 				  qhat[i]= (delta_yt-Sr_Y2[i])/(delta_yt-1);
-				  phat[i]=1 /(1+ (qhat[i]/(1-qhat[i]))*(1+eta[i])*exp(-v[i]));
+				  phat[i]=1 /(1+ (qhat[i]/(1-qhat[i]))*(1+eta[i])*(float)exp(-v[i]));
 			 }
 			 else if(Sr_Y2[i]>=delta_yt || Sr_S[i]>=delta_s){
 				  phat[i] = 1;
@@ -243,13 +249,13 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 		 else{
 			  for(i=0;i<FRAME_LEN21;i++){
 
-				  Smin[i] = min(S_his0[i][6], Smact[i]);
-  				  Smin[i] = min(S_his0[i][5], Smin[i]);
-   			      Smin[i] = min(S_his0[i][4], Smin[i]);
-                  Smin[i] = min(S_his0[i][3], Smin[i]);
-  				  Smin[i] = min(S_his0[i][2], Smin[i]);
-   			      Smin[i] = min(S_his0[i][1], Smin[i]);
-                  Smin[i] = min(S_his0[i][0], Smin[i]);
+				  Smin[i] = min_local(S_his0[i][6], Smact[i]);
+  				  Smin[i] = min_local(S_his0[i][5], Smin[i]);
+   			      Smin[i] = min_local(S_his0[i][4], Smin[i]);
+                  Smin[i] = min_local(S_his0[i][3], Smin[i]);
+  				  Smin[i] = min_local(S_his0[i][2], Smin[i]);
+   			      Smin[i] = min_local(S_his0[i][1], Smin[i]);
+                  Smin[i] = min_local(S_his0[i][0], Smin[i]);
 
 				  S_his0[i][7] = S_his0[i][6];
   				  S_his0[i][6] = S_his0[i][5];
@@ -260,16 +266,16 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 				  S_his0[i][1] = S_his0[i][0];
 				  S_his0[i][0] =  Smact[i];
 				   
-                  Smin[i] = min(Smin[i], Smact[i]);
+                  Smin[i] = min_local(Smin[i], Smact[i]);
 				  Smact[i] = S[i];
 
-				  Smint[i] = min(S_his[i][6], Smactt[i]);
-  				  Smint[i] = min(S_his[i][5], Smint[i]);
-   			      Smint[i] = min(S_his[i][4], Smint[i]);
-                  Smint[i] = min(S_his[i][3], Smint[i]);
-  				  Smint[i] = min(S_his[i][2], Smint[i]);
-   			      Smint[i] = min(S_his[i][1], Smint[i]);
-                  Smint[i] = min(S_his[i][0], Smint[i]);
+				  Smint[i] = min_local(S_his[i][6], Smactt[i]);
+  				  Smint[i] = min_local(S_his[i][5], Smint[i]);
+   			      Smint[i] = min_local(S_his[i][4], Smint[i]);
+                  Smint[i] = min_local(S_his[i][3], Smint[i]);
+  				  Smint[i] = min_local(S_his[i][2], Smint[i]);
+   			      Smint[i] = min_local(S_his[i][1], Smint[i]);
+                  Smint[i] = min_local(S_his[i][0], Smint[i]);
 
 				  S_his[i][7] = S_his[i][6];
   				  S_his[i][6] = S_his[i][5];
@@ -280,7 +286,7 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 				  S_his[i][1] = S_his[i][0];
 				  S_his[i][0] =  Smactt[i];
 				  
-                  Smint[i] = min(Smint[i], Smactt[i]);
+                  Smint[i] = min_local(Smint[i], Smactt[i]);
 				  Smactt[i] = St[i];
 			  }
 
@@ -290,19 +296,21 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 
     //  lambda_d1=1.4685*lambda_d ;
      for(i=0;i<FRAME_LEN21;i++){
-		 lambda_d[i] = 1.4685*lambda_dav[i];
+		 lambda_d[i] = 1.4685f*lambda_dav[i];
 		 lambda_d_global[i] = lambda_d[i];
 	 }
 
 
-{ omlsa_float32_t q[FRAME_LEN21];		
-
-	 {  omlsa_float32_t xi_local[FRAME_LEN21+3];       
-        omlsa_float32_t xi_local_dB[FRAME_LEN21];      
-	    omlsa_float32_t xi_global[FRAME_LEN21+32];     
-	    omlsa_float32_t xi_global_dB[FRAME_LEN21]; 
-        omlsa_float32_t	P_local[FRAME_LEN21];    		    
-	    omlsa_float32_t P_global[FRAME_LEN21];         
+{ 		
+     omlsa_float32_t q[FRAME_LEN21];  //B
+	 { 
+		 
+     omlsa_float32_t P_local[FRAME_LEN21];    		    
+	 omlsa_float32_t P_global[FRAME_LEN21]; 
+	 omlsa_float32_t xi_local[FRAME_LEN21+3];       
+     omlsa_float32_t xi_local_dB[FRAME_LEN21];      
+	 omlsa_float32_t xi_global[FRAME_LEN21+32];     
+	 omlsa_float32_t xi_global_dB[FRAME_LEN21]; 
 	  		 //B T
          ex_xi_frame = xi_frame;
 		 xi_frame = 0;
@@ -322,20 +330,20 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
  
       for(i=0;i<FRAME_LEN21;i++){
 		  if(xi_local[i]>0){
-			  xi_local_dB[i] = 10*log10(xi_local_ptr[i]);
+			  xi_local_dB[i] = 10*(omlsa_float32_t)log10(xi_local_ptr[i]);
 		  }
 		  else{
 			  xi_local_dB[i] = -100;
 		  }
 		  if(xi_global[i]>0){
-			  xi_global_dB[i] = 10*log10(xi_global_ptr[i]);
+			  xi_global_dB[i] = 10*(omlsa_float32_t)log10(xi_global_ptr[i]);
 		  }
 		  else{
 			  xi_global_dB[i] = -100;
 		  }
 	  }
 	  if(xi_frame>0){
-  	    xi_frame_dB = 10*log10(xi_frame);
+  	    xi_frame_dB = 10*(omlsa_float32_t)log10(xi_frame);
 	  }
 	  else {
 	    xi_frame_dB = -100;
@@ -360,16 +368,16 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 		  
 		m_P_local =  m_P_local/(k2_local+k3_local-3-2);
  
-        if(m_P_local<0.25){
+        if(m_P_local<0.25f){
 			for(i=k2_local;i<k3_local;i++){
 				P_local[i]=P_min;
 			}
 		}
  
 
-         if ((m_P_local<0.5) && (FrameCnt>120)){
+         if ((m_P_local<0.5f) && (FrameCnt>120)){
              for(i=8;i<FRAME_LEN21-8;i++){			 
-	 			 if(  lambda_d_long[i] > 2.5*(lambda_d_long[i] + lambda_d_long[i-2])  ){
+	 			 if(  lambda_d_long[i] > 2.5f*(lambda_d_long[i] + lambda_d_long[i-2])  ){
 					    P_local[i+6] = P_local[i+7]= P_local[i+8] = P_min;
 				 }
 			 }
@@ -392,7 +400,7 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
             P_frame=P_min; 
 	   }   
 	   else if(xi_frame >= ex_xi_frame) {
-		    xi_peak_dB=min(max(xi_frame_dB,xi_p_min_dB),xi_p_max_dB);  
+		    xi_peak_dB=min_local(max_local(xi_frame_dB,xi_p_min_dB),xi_p_max_dB);  
 		    P_frame=1;    
 	   }
 	   else if(xi_frame_dB>=xi_peak_dB+xi_max_dB ){
@@ -405,141 +413,96 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
             P_frame=P_min+(xi_frame_dB-xi_min_dB-xi_peak_dB)/(xi_max_dB-xi_min_dB)*(1-P_min);
 	   }
    
-//      
-//      
-//    q = 1 - P_frame .* P_global .* P_local;     
-//    q = min(qmax, q);
+ 
       for(i=0;i<FRAME_LEN21;i++){
 
 		  q[i] = 1 - P_frame*P_global[i]*P_local[i];
-		  q[i] = min(qmax,q[i]);
+		  q[i] = min_local(qmax,q[i]);
 	  }
     }
-//    % (2) est speech present probability 'P' and gain
-//
-//        gmma=X_F_2./max(lambda_d1,1e-10);                       % postier SNR eq.10 in paper
-//        eta=alpha_eta*eta_2term +(1-alpha_eta)*max(gmma-1,0); % proior SNR  eq.28  
-//        eta=max(eta,eta_min);
-//        v=gmma.*eta./(1+eta);                                % eq.10       
-//        
-
+ 
       for(i=0;i<FRAME_LEN21;i++){
-          gamma[i] = Y_2[i] / max(lambda_d_global[i], 1e-10);
-		  eta[i] = alpha_eta*eta_2term[i] + (1-alpha_eta)*max(gamma[i]-1,0);
-		  eta[i] = max(eta[i],eta_min);
-		  v[i]=gamma[i]*eta[i]/(1+eta[i]);    
+          gamma[i] = Y_2[i] / max_local(lambda_d_global[i], 1e-10f);
+		  eta[i] = alpha_eta*eta_2term[i] + (1-alpha_eta)*max_local(gamma[i]-1,0);
+		  eta[i] = max_local(eta[i],eta_min);
+		     v[i]= gamma[i]*eta[i]/(1+eta[i]);    
 	  }
 
 {
+
      omlsa_float32_t PH1[FRAME_LEN21];			 //B T
      omlsa_float32_t GH1[FRAME_LEN21];			 //B T
      omlsa_float32_t GH0[FRAME_LEN21];			 //B T
      omlsa_float32_t G[FRAME_LEN21];				 //B T
-   
-     	
 				
-//     
-//     PH1=zeros(M21,1);
-//     idx=find(q<0.9);
-//     PH1(idx)=1./(1+  q(idx)./(1-q(idx)).*(1+eta(idx)).*exp(-v(idx)));
+ 
         for(i=0;i<FRAME_LEN21;i++){
-           if(q[i]<0.9){
-               PH1[i] = 1/( 1 +(q[i] /(1 - q[i])) * (1+eta[i]) * exp(-v[i])  );
+           if(q[i]<0.9f){
+               PH1[i] = 1/( 1 +(q[i] /(1 - q[i])) * (1+eta[i]) * (omlsa_float32_t)exp(-v[i])  );
 		   }
 		   else{
 			   PH1[i] = 0;
 		   }            
 		}
-//    
-//    % Gain 
-//     GH1=ones(M21,1);
-//     idx=find(v>5);
-//     GH1(idx) = (eta(idx)./(1+eta(idx)));
-//     idx=find(v<=5 & v>0);
-//     GH1(idx)=eta(idx)./(1+eta(idx)).*exp(0.5*expint(v(idx)));
+ 
        for(i=0;i<FRAME_LEN21;i++){
 		   if(v[i]>5){
 			   GH1[i] = eta[i]/(1+eta[i]);
 		   }
 		   else if(v[i]<=5 && v[i]>0){
-                GH1[i] = (eta[i]/(eta[i]+1))*exp(0.5*expint(v[i])); // need
+                GH1[i] = (eta[i]/(eta[i]+1))*(omlsa_float32_t)exp(0.5*expint(v[i])); // need
 		   }	
 		   else {
 		        GH1[i] = 1;
 		   }
 	   }
-
-//  
-//    % G = GH1.^P .* (Gmin.^(1-P));
-//         
-//     if tone_flag   % new version     
-//         lambda_d_global=lambda_d1;   % new version         
-//         lambda_d_global(4:M21-3)
-//       =min([lambda_d_global(4:M21-3),  //   3~M21-4
-//             lambda_d_global(1:M21-6),  //   0~M21-7
-//             lambda_d_global(7:M21  )]  //   6~M21-1
- //            ,[],2);   % new version         
-//         Sy=0.8*Sy+0.2*X_F_2;    % new version
-//         GH0=Gmin*(lambda_d_global./(Sy+1e-10)).^0.5;   % new version omlsa3        
-//     else   % new version            
-//         GH0=Gmin;   %#ok<UNRCH> % new version   
-//     end   % new version
-//        
-//     G=GH1.^PH1.*GH0.^(1-PH1);     
-//     eta_2term=GH1.^2.*gmma;
-//       
+ 
         for(i=3;i<FRAME_LEN21-3;i++){
 			omlsa_float32_t minval;
   
-			minval = min(lambda_d[i] , lambda_d[i-3] );
-            lambda_d_global[i] = min(minval , lambda_d[i+3] );
+			minval = min_local(lambda_d[i] , lambda_d[i-3] );
+            lambda_d_global[i] = min_local(minval , lambda_d[i+3] );
 		}
         
 		for(i=0;i<FRAME_LEN21;i++){
-			Sy[i]=0.8*Sy[i]+0.2*Y_2[i];    
+			Sy[i]=0.8f*Sy[i]+0.2f*Y_2[i];    
 		}
 		
          for(i=0;i<FRAME_LEN21;i++){
-            GH0[i]= Gmin * sqrt(lambda_d_global[i]/(Sy[i]+ 1e-10));         			
+            GH0[i]= Gmin * (omlsa_float32_t)sqrt(lambda_d_global[i]/(Sy[i]+ 1e-10f));         			
 		 }
 
 		  for(i=0;i<FRAME_LEN21;i++){      
-		    G[i]= pow(GH1[i],PH1[i]) * pow(GH0[i] ,(1-PH1[i]));  
+		    G[i]= powf(GH1[i],PH1[i]) * (omlsa_float32_t)powf(GH0[i] ,(1-PH1[i]));  
 		  }
        
          for(i=0;i<FRAME_LEN21;i++){
              eta_2term[i]=GH1[i]*GH1[i]*gamma[i];
 		 }
-     
- 
-        
-     //   X=[zeros(3,1); G(4:M21-1).*Y(4:M21-1); 0];
-     //   X(M21+1:M)=conj(X(M21-1:-1:2)); %extend the anti-symmetric range of the spectum
-     //   x=Cwin^2*win.*real(ifft(X));
- 
+  
 
         for(i=0;i<FRAME_LEN21;i++){
 		
 			if(i<3 ||i==(FRAME_LEN21-1)){
-			   X_COMPLEX[i].re = 0;
-  			   X_COMPLEX[i].im = 0;
+			   Y_COMPLEX[i].re = 0;
+  			   Y_COMPLEX[i].im = 0;
 			}
 			else {
- 			   X_COMPLEX[i].re = Y_COMPLEX[i].re * G[i];
-			   X_COMPLEX[i].im = Y_COMPLEX[i].im * G[i];			
+ 			   Y_COMPLEX[i].re = Y_COMPLEX[i].re * G[i];
+			   Y_COMPLEX[i].im = Y_COMPLEX[i].im * G[i];			
 			}
 		}  
 
 
         for(i=FRAME_LEN21;i<FRAME_LEN ;i++){
-			X_COMPLEX[i].re = X_COMPLEX[FRAME_LEN-i].re;
-			X_COMPLEX[i].im = -X_COMPLEX[FRAME_LEN-i].im;
+			Y_COMPLEX[i].re = Y_COMPLEX[FRAME_LEN-i].re;
+			Y_COMPLEX[i].im = -Y_COMPLEX[FRAME_LEN-i].im;
 		}
 		 
         {
 		    creal_T x_g_c[FFT_LEN];
 	
-		    ifft(X_COMPLEX, x_g_c  );
+		    ifft(Y_COMPLEX, x_g_c  );
   
 		   for(i=0;i<FRAME_LEN;i++){	 
 		    	x_g_c[i].re =  x_g_c[i].re *Window[i]* Cwin*Cwin;
@@ -552,9 +515,9 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 		} 	
 		}
 		for(i=0;i<FRAME_LEN/4;i++){
-			int temp;
+			omlsa_float32_t temp;
 
-			temp = ( out_buf[i]* 32768 );
+			temp = (omlsa_float32_t)( out_buf[i]* 32768 );
 
 			temp = (temp>32767)? 32767: ((temp<-32768)? -32768:temp);
 
@@ -574,6 +537,8 @@ omlsa_float32_t Sr_S[FRAME_LEN21];				 //  B   T
 	    }
 		 
 		FrameCnt++;
+
+		return rev;
 }
  
   
@@ -596,7 +561,7 @@ void HammingWin75Overlap(int len) {
    omlsa_float32_t W0_avg;//, Cwin;
  
     for(i=0;i<len;i++){
-        Window[i] = 0.54-0.46*cos(2*M_PI*(i )/(len-1));
+        Window[i] = 0.54f-0.46f*cosf(2*M_PI*(i)/(len-1));
 		Win2[i] = Window[i]*Window[i];		 
 	}
    
@@ -608,7 +573,7 @@ void HammingWin75Overlap(int len) {
 
 	 W0_avg /= FRAME_LEN41;
 
-	 W0_avg= sqrt(W0_avg);
+	 W0_avg= sqrtf(W0_avg);
 
 
      Cwin = 0;
@@ -617,7 +582,7 @@ void HammingWin75Overlap(int len) {
 		Cwin+= Window[i]*Window[i];
 	}
 
-	Cwin = sqrt(Cwin);
+	Cwin = sqrtf(Cwin);
   
     for(i=0;i<FRAME_LEN;i++){
 		Window[i]/= Cwin;	 
