@@ -76,6 +76,9 @@
     <ClInclude Include="omlsa_typedefs.h" />
     <ClInclude Include="omlsa_var.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="DevelopmentNote.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

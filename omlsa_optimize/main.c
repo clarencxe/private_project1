@@ -23,12 +23,10 @@ void main(){
     FILE*fin, *fout;
      char namein[]= {".wav"};
      char nameout[]={"omlsaout_opt.wav"};
-     char name[100] = {"../voice/noise5"};  
+     char name[100] = {"../voice/noise2"};  
 
      char nameo[100];
-
- 
-
+	  
      memcpy(nameo,name, sizeof(name));
 
      strcat(name,namein); 
@@ -45,13 +43,14 @@ void main(){
 
      while(feof(fin)==NULL){
 
-		 if(!maincnt) {		 	
-			 short tempbuf[512];
-
-			 fread(tempbuf, INLEN*2, 1, fin); 
-             PostFilterProcess(tempbuf, INLEN,pcmoutput, &outlen);
-		 }
-		 else{
+		// if(!maincnt) {		 	
+		//	 short tempbuf[512];
+		//
+		//	 fread(tempbuf, INLEN*2, 1, fin); 
+        //     PostFilterProcess(tempbuf, INLEN,pcmoutput, &outlen);
+		// }
+		// else
+		 {
 		     fread(pcminput, INLEN41*2, 1, fin); 
              PostFilterProcess(pcminput, INLEN41,pcmoutput, &outlen);
 		 }

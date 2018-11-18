@@ -1,26 +1,20 @@
-﻿生成启动时间为 2018/11/15 17:05:21。
-     1>项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa_optimize\omlsa_optimize.vcxproj”在节点 2 上(rebuild 个目标)。
-     1>_PrepareForClean:
-         正在删除文件“Debug\omlsa_optimize.lastbuildstate”。
-       InitializeBuildStatus:
+﻿生成启动时间为 2018/11/16 15:24:17。
+     1>项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa_optimize\omlsa_optimize.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
          正在创建“Debug\omlsa_optimize.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
-         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt conv.c expint.c fft.c ifft.c main.c omlsa.c
+         E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt main.c omlsa.c
          omlsa.c
          main.c
-     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(34): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(32): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
-     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(35): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(33): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
-     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(37): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(35): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
-     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(38): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(36): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
-     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(46): warning C4047: “==”:“int”与“void *”的间接级别不同
-         ifft.c
-         fft.c
-         expint.c
-         conv.c
+     1>f:\work\2018\beamforming\c\omlsa\omlsa-git\omlsa_optimize\main.c(44): warning C4047: “==”:“int”与“void *”的间接级别不同
          正在生成代码...
        Link:
          E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\omlsa_optimize.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.lib" /MACHINE:X86 Debug\conv.obj
@@ -29,14 +23,15 @@
          Debug\ifft.obj
          Debug\main.obj
          Debug\omlsa.obj
+         LINK : 没有找到 F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.exe 或上一个增量链接没有生成它；正在执行完全链接
          omlsa_optimize.vcxproj -> F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.exe
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"F:\Work\2018\Beamforming\C\omlsa\omlsa-git\Debug\omlsa_optimize.exe;#1" /manifest Debug\omlsa_optimize.exe.intermediate.manifest
        FinalizeBuildStatus:
          正在删除文件“Debug\omlsa_optimize.unsuccessfulbuild”。
          正在对“Debug\omlsa_optimize.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa_optimize\omlsa_optimize.vcxproj”(rebuild 个目标)的操作。
+     1>已完成生成项目“F:\Work\2018\Beamforming\C\omlsa\omlsa-git\omlsa_optimize\omlsa_optimize.vcxproj”(build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:01.33
+已用时间 00:00:01.68

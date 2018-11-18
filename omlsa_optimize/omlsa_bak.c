@@ -1,4 +1,6 @@
 #include"omlsa_def.h"
+
+
 #include"omlsa_var.h"
 /*
    omlsa.c 2018/11/1
@@ -40,26 +42,24 @@ void PostFilterInit(){
 #define REV_SUCESS 0
 
 
-
+   //Ram struct to 
   
 
 int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 
-	int i,rev ,size; omlsa_float32_t *Sf_ptr, *Conv_I_ptr;
-
-
-   //  omlsa_float32_t lambda_d_global[FRAME_LEN21];	  
-     omlsa_float32_t gamma[FRAME_LEN21];			 
-     omlsa_float32_t v[FRAME_LEN21];				 
-     creal_T Y_COMPLEX[FFT_LEN];       
+	int i,rev ; int size; omlsa_float32_t *Sf_ptr, *Conv_I_ptr;
+     omlsa_float32_t lambda_d_global[FRAME_LEN21];	 //  B 
+     omlsa_float32_t gamma[FRAME_LEN21];				 //  B  
+     omlsa_float32_t v[FRAME_LEN21];					 //  B  T  
 	 omlsa_float32_t Y_2[FRAME_LEN21];	
+     creal_T Y_COMPLEX[FFT_LEN];  //2A T
 	
      rev = REV_SUCESS;
 
 // Temp
    
 	// Temp var
-#if 0
+
     if(FrameCnt==1){
      	for(i=0;i< Inlen; i++){	
 	    	pcm[i] = (omlsa_float32_t)pIn[i]/32768.0f;		 	
@@ -70,12 +70,7 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	    	pcm[i+FRAME_SHIFT] = (omlsa_float32_t)pIn[i]/32768.0f;		 	
 	     }
 	}
-#else 
 
-     	for(i=0;i< Inlen; i++){	
-	    	pcm[i+FRAME_SHIFT] = (omlsa_float32_t)pIn[i]/32768.0f;		 	
-	     }
-#endif
 
     {
      omlsa_float32_t winy[FRAME_LEN];  //  A
@@ -186,38 +181,45 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	 }
 
 {
- 
+	 omlsa_float32_t phat[FRAME_LEN21];	
+	 omlsa_float32_t qhat[FRAME_LEN21];				 
+     omlsa_float32_t Sr_Y2[FRAME_LEN21];			 
+     omlsa_float32_t Sr_S[FRAME_LEN21];	
+  
+        for(i=0;i<FRAME_LEN21;i++){         
+		 	 Sr_Y2[i] = Y_2[i] / Bmin / max_local(Smint[i], 1e-10f);
+			 Sr_S[i] = S[i]/Bmin/max_local(Smint[i],1e-10f); 
+		}
          
 		for(i=0;i<FRAME_LEN21;i++){ 
-
-			 omlsa_float32_t phat , qhat, Sr_Y2,Sr_S ;
- 
-			  Sr_Y2  = Y_2[i] / Bmin / max_local(Smint[i], 1e-10f);
-              Sr_S  = S[i]/Bmin/max_local(Smint[i],1e-10f); 
   
-			 if(Sr_Y2 >1 && Sr_Y2 <delta_yt && Sr_S <delta_s){
-				  qhat= (delta_yt-Sr_Y2 )/(delta_yt-1);
-				  phat =1 /(1+ (qhat/(1-qhat))*(1+eta[i])*(float)exp(-v[i]));
+			 if(Sr_Y2[i]>1 && Sr_Y2[i]<delta_yt && Sr_S[i]<delta_s){
+				  qhat[i]= (delta_yt-Sr_Y2[i])/(delta_yt-1);
+				  phat[i]=1 /(1+ (qhat[i]/(1-qhat[i]))*(1+eta[i])*(float)exp(-v[i]));
 			 }
-			 else if(Sr_Y2 >=delta_yt || Sr_S >=delta_s){
-				  phat  = 1;
+			 else if(Sr_Y2[i]>=delta_yt || Sr_S[i]>=delta_s){
+				  phat[i] = 1;
 			 }
 			 else{
-				  phat  = 0;
+				  qhat[i] = 1; phat[i] = 0;
 			 }
-
-		     alpha_dt[i] = alpha_d + (1- alpha_d) * phat ;  
-             lambda_dav[i] = alpha_dt[i]* lambda_dav[i] + (1- alpha_dt[i]) * Y_2[i];
-
-			  if(FrameCnt<15){
-				  lambda_d_long[i]=lambda_dav[i];
-			  }
-			  else{
-				  alpha_dt_long[i] =alpha_d_long +(1-alpha_d_long)*phat ;   
-                  lambda_d_long[i]=alpha_dt_long[i] *lambda_d_long[i]+(1-alpha_dt_long[i]) *Y_2[i]; 
-			  }
 		 }
  
+         for(i=0;i<FRAME_LEN21;i++){ 
+			 alpha_dt[i] = alpha_d + (1- alpha_d) * phat[i];  
+             lambda_dav[i] = alpha_dt[i]* lambda_dav[i] + (1- alpha_dt[i]) * Y_2[i];
+		 }
+ 
+     if(FrameCnt<15){
+		 for(i=0;i<FRAME_LEN21;i++)
+           lambda_d_long[i]=lambda_dav[i];
+	 }
+	 else{ 
+		 for(i=0;i<FRAME_LEN21;i++){
+			 alpha_dt_long[i] =alpha_d_long +(1-alpha_d_long)*phat[i];
+             lambda_d_long[i]=alpha_dt_long[i] *lambda_d_long[i]+(1-alpha_dt_long[i]) *Y_2[i];
+		 }
+	 }
 
  }
      MinSeg = MinSeg +1;
@@ -295,21 +297,24 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 		 }         
 	 }
 
- 
+    //  lambda_d1=1.4685*lambda_d ;
      for(i=0;i<FRAME_LEN21;i++){
 		 lambda_d[i] = 1.4685f*lambda_dav[i];
-		// lambda_d_global[i] = lambda_d[i];
+		 lambda_d_global[i] = lambda_d[i];
 	 }
 
 
-     { 		
-   
+{ 		
+     omlsa_float32_t q[FRAME_LEN21];  //B
+	 { 
+		 
      omlsa_float32_t P_local[FRAME_LEN21];    		    
 	 omlsa_float32_t P_global[FRAME_LEN21]; 
-	 omlsa_float32_t xi_local[FRAME_LEN21+3];              
+	 omlsa_float32_t xi_local[FRAME_LEN21+3];       
+     omlsa_float32_t xi_local_dB[FRAME_LEN21];      
 	 omlsa_float32_t xi_global[FRAME_LEN21+32];     
-	
- 
+	 omlsa_float32_t xi_global_dB[FRAME_LEN21]; 
+	  		 //B T
          ex_xi_frame = xi_frame;
 		 xi_frame = 0;
      
@@ -321,58 +326,43 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 		}
 	  }
 
-       xi_frame /=(FRAME_LEN21-2);
+     xi_frame /=(FRAME_LEN21-2);
  
        b_conv(xi,xi_local,&size);   xi_local_ptr = &xi_local[1];
        c_conv(xi,xi_global,&size ); xi_global_ptr = &xi_global[15];
  
       for(i=0;i<FRAME_LEN21;i++){
-        omlsa_float32_t xi_global_dB ,xi_local_dB; 
-
-
 		  if(xi_local[i]>0){
-			  xi_local_dB = 10*(omlsa_float32_t)log10(xi_local_ptr[i]);
+			  xi_local_dB[i] = 10*(omlsa_float32_t)log10(xi_local_ptr[i]);
 		  }
 		  else{
-			  xi_local_dB  = -100;
+			  xi_local_dB[i] = -100;
 		  }
-
-			if(xi_local_dB <=xi_min_dB){
-				P_local[i] = P_min ;
-			}
-			else if((xi_local_dB >xi_min_dB) && (xi_local_dB <xi_max_dB)){
-				P_local[i] =P_min+(xi_local_dB -xi_min_dB)/(xi_max_dB-xi_min_dB)*(1-P_min); 
-			}
-			else {
-				P_local[i] = 1;
-			}
-
 		  if(xi_global[i]>0){
-			  xi_global_dB  = 10*(omlsa_float32_t)log10(xi_global_ptr[i]);
+			  xi_global_dB[i] = 10*(omlsa_float32_t)log10(xi_global_ptr[i]);
 		  }
 		  else{
-			  xi_global_dB  = -100;
-		  }
-
-		  if(xi_global_dB <=xi_min_dB){
-		  	P_global[i] = P_min ;
-		  }
-		  else if(xi_global_dB >xi_min_dB && xi_global_dB <xi_max_dB){
-		  	P_global[i] = P_min+(xi_global_dB  -xi_min_dB)/(xi_max_dB-xi_min_dB)*(1-P_min); 
-		  }
-		  else {
-		  	P_global[i] = 1;
+			  xi_global_dB[i] = -100;
 		  }
 	  }
-
-	  
 	  if(xi_frame>0){
   	    xi_frame_dB = 10*(omlsa_float32_t)log10(xi_frame);
 	  }
 	  else {
 	    xi_frame_dB = -100;
 	  }
-  
+ 
+        for(i=0;i<FRAME_LEN21;i++){
+			if(xi_local_dB[i]<=xi_min_dB){
+				P_local[i] = P_min ;
+			}
+			else if((xi_local_dB[i]>xi_min_dB) && (xi_local_dB[i]<xi_max_dB)){
+				P_local[i] =P_min+(xi_local_dB[i] -xi_min_dB)/(xi_max_dB-xi_min_dB)*(1-P_min); 
+			}
+			else {
+				P_local[i] = 1;
+			}
+		}
      
         m_P_local = 0;
         for(i=2;i<k2_local+k3_local-3;i++){          
@@ -395,7 +385,20 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 				 }
 			 }
 		 }
-   
+ 
+        for(i=0;i<FRAME_LEN21;i++){
+			if(xi_global_dB[i]<=xi_min_dB){
+				P_global[i] = P_min ;
+			}
+			else if(xi_global_dB[i]>xi_min_dB && xi_global_dB[i]<xi_max_dB){
+				P_global[i] =P_min+(xi_global_dB[i] -xi_min_dB)/(xi_max_dB-xi_min_dB)*(1-P_min); 
+			}
+			else {
+				P_global[i] = 1;
+			}
+		}
+		  
+       
        if( xi_frame_dB<=xi_min_dB){
             P_frame=P_min; 
 	   }   
@@ -412,76 +415,86 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 	   else{
             P_frame=P_min+(xi_frame_dB-xi_min_dB-xi_peak_dB)/(xi_max_dB-xi_min_dB)*(1-P_min);
 	   }
- 
-    
+   
  
       for(i=0;i<FRAME_LEN21;i++){
-          gamma[i] = Y_2[i] / max_local(lambda_d[i], 1e-10f);
+
+		  q[i] = 1 - P_frame*P_global[i]*P_local[i];
+		  q[i] = min_local(qmax,q[i]);
+	  }
+    }
+ 
+      for(i=0;i<FRAME_LEN21;i++){
+          gamma[i] = Y_2[i] / max_local(lambda_d_global[i], 1e-10f);
 		  eta[i] = alpha_eta*eta_2term[i] + (1-alpha_eta)*max_local(gamma[i]-1,0);
 		  eta[i] = max_local(eta[i],eta_min);
-		  v[i]   = gamma[i]*eta[i]/(1+eta[i]);    
+		     v[i]= gamma[i]*eta[i]/(1+eta[i]);    
 	  }
 
-      {
+{
 
-	    omlsa_float32_t lambda_d_global[FRAME_LEN21];	
-
- 		lambda_d_global[0]=  lambda_d[0];
-		lambda_d_global[1]=  lambda_d[1];
-		lambda_d_global[2]=  lambda_d[2];
-		lambda_d_global[FRAME_LEN21-3]=  lambda_d[FRAME_LEN21-3];
-		lambda_d_global[FRAME_LEN21-2]=  lambda_d[FRAME_LEN21-2];
-		lambda_d_global[FRAME_LEN21-1]=  lambda_d[FRAME_LEN21-1];
-
+     omlsa_float32_t PH1[FRAME_LEN21];			 //B T
+     omlsa_float32_t GH1[FRAME_LEN21];			 //B T
+     omlsa_float32_t GH0[FRAME_LEN21];			 //B T
+     omlsa_float32_t G[FRAME_LEN21];				 //B T
+				
+ 
+        for(i=0;i<FRAME_LEN21;i++){
+           if(q[i]<0.9f){
+               PH1[i] = 1/( 1 +(q[i] /(1 - q[i])) * (1+eta[i]) * (omlsa_float32_t)exp(-v[i])  );
+		   }
+		   else{
+			   PH1[i] = 0;
+		   }            
+		}
+ 
+       for(i=0;i<FRAME_LEN21;i++){
+		   if(v[i]>5){
+			   GH1[i] = eta[i]/(1+eta[i]);
+		   }
+		   else if(v[i]<=5 && v[i]>0){
+                GH1[i] = (eta[i]/(eta[i]+1))*(omlsa_float32_t)exp(0.5*expint(v[i])); // need
+		   }	
+		   else {
+		        GH1[i] = 1;
+		   }
+	   }
+ 
         for(i=3;i<FRAME_LEN21-3;i++){
 			omlsa_float32_t minval;
   
 			minval = min_local(lambda_d[i] , lambda_d[i-3] );
             lambda_d_global[i] = min_local(minval , lambda_d[i+3] );
 		}
+        
+		for(i=0;i<FRAME_LEN21;i++){
+			Sy[i]=0.8f*Sy[i]+0.2f*Y_2[i];    
+		}
+		
+         for(i=0;i<FRAME_LEN21;i++){
+            GH0[i]= Gmin * (omlsa_float32_t)sqrt(lambda_d_global[i]/(Sy[i]+ 1e-10f));         			
+		 }
 
-	
+		  for(i=0;i<FRAME_LEN21;i++){      
+		    G[i]= powf(GH1[i],PH1[i]) * (omlsa_float32_t)powf(GH0[i] ,(1-PH1[i]));  
+		  }
+       
+         for(i=0;i<FRAME_LEN21;i++){
+             eta_2term[i]=GH1[i]*GH1[i]*gamma[i];
+		 }
+  
 
-        for(i=0;i<FRAME_LEN21;i++){	
-			omlsa_float32_t q, PH1, GH0,GH1,G;
- 		
-           q = 1 - P_frame*P_global[i]*P_local[i];
-           q = min_local(qmax,q);
-
-
-           if(q<0.9f){
-               PH1  = 1/( 1 +(q /(1 - q)) * (1+eta[i]) * (omlsa_float32_t)exp(-v[i])  );
-		   }
-		   else{
-			   PH1  = 0;
-		   }        
-
-           if(v[i]>5){
-  	          GH1= eta[i]/(1+eta[i]);
-           }
-           else if(v[i]<=5 && v[i]>0){
-                GH1= (eta[i]/(eta[i]+1))*(omlsa_float32_t)exp(0.5*expint(v[i])); // need
-           }	
-           else {
-                GH1= 1;
-           }
-
-		      Sy[i]=0.8f*Sy[i]+0.2f*Y_2[i];   
- 
-			  GH0= Gmin * (omlsa_float32_t)sqrt(lambda_d_global[i]/(Sy[i]+ 1e-10f));         	
-			  G= powf(GH1 ,PH1 ) * (omlsa_float32_t)powf(GH0 ,(1-PH1 ));  
-              eta_2term[i]=GH1 *GH1 *gamma[i];
-
+        for(i=0;i<FRAME_LEN21;i++){
+		
 			if(i<3 ||i==(FRAME_LEN21-1)){
 			   Y_COMPLEX[i].re = 0;
   			   Y_COMPLEX[i].im = 0;
 			}
 			else {
- 			   Y_COMPLEX[i].re = Y_COMPLEX[i].re *G;
-			   Y_COMPLEX[i].im = Y_COMPLEX[i].im *G;			
+ 			   Y_COMPLEX[i].re = Y_COMPLEX[i].re * G[i];
+			   Y_COMPLEX[i].im = Y_COMPLEX[i].im * G[i];			
 			}
-		}
-        }
+		}  
 
 
         for(i=FRAME_LEN21;i<FRAME_LEN ;i++){
@@ -495,35 +508,36 @@ int PostFilterProcess(short*pIn, int Inlen, short*pOut, int*Outlen){
 		    ifft(Y_COMPLEX, x_g_c  );
   
 		   for(i=0;i<FRAME_LEN;i++){	 
-		    	x_g_c[i].re =  x_g_c[i].re *Window[i]* Cwin*Cwin*32768;
+		    	x_g_c[i].re =  x_g_c[i].re *Window[i]* Cwin*Cwin;
 		    }
   
 		    for(i=0;i<FRAME_LEN;i++){ 
-
-				float temp;
-
-				temp = out_buf[i] + x_g_c[i].re;
-
-				out_buf[i] =(short)((temp>32767)? 32767: ((temp<-32768)? -32768:temp));
-
-				if(i<FRAME_LEN/4)
-				    pOut[i] =  (short)out_buf[i];
+				out_buf[i] = out_buf[i] + x_g_c[i].re;
 		    }
         }
-		  	
+		} 	
 		}
-	  
+		for(i=0;i<FRAME_LEN/4;i++){
+			omlsa_float32_t temp;
+
+			temp = (omlsa_float32_t)( out_buf[i]* 32768 );
+
+			temp = (temp>32767)? 32767: ((temp<-32768)? -32768:temp);
+
+			pOut[i] =  (short)temp;
+		}
+
 		for(i=0;i<FRAME_LEN;i++){
 
-			 if(i<FRAME_SHIFT){
-			    out_buf[i] = out_buf[i+FRAME_LEN/4];
-			    pcm[i ] = pcm[i +	FRAME_LEN41]; //   [[...] . ]  <- [.[...]]
-			 }
-			else {
+			 if(i<FRAME_SHIFT)
+			   out_buf[i] = out_buf[i+FRAME_LEN/4];
+			else 
 			    out_buf[i] = 0;
-			}
 		}
- 
+		 
+	    for(i=0;i< FRAME_SHIFT; i++){	
+		    pcm[i ] = pcm[i +	FRAME_LEN41]; //   [[...] . ]  <- [.[...]]
+	    }
 		 
 		FrameCnt++;
 

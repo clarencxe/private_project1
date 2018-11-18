@@ -7,11 +7,9 @@ typedef  struct {
    omlsa_float32_t im;
 }creal_T;
 
-//Ram A:  512*8 2K B = 257 *8 1K
-//Num A:  10   5 + 6T    B:  42 + 15T  
-//             10k 12k       42k + 15k        
+ short out_buf[FRAME_LEN];         //A  4k   
+
 omlsa_float32_t pcm[FRAME_LEN];             //A  
-omlsa_float32_t out_buf[FRAME_LEN];         //A  4k
 omlsa_float32_t Sf[FRAME_LEN21+3];			//B
 omlsa_float32_t S[FRAME_LEN21];				//B
 omlsa_float32_t Smin[FRAME_LEN21];			//B

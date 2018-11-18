@@ -1,0 +1,4 @@
+omlsa-mcra optimize note:
+
+1) 2018/11/15 Divide all temp var. Keep global var. Change all double into float.
+2) 2018/11/16 Control temp var.
